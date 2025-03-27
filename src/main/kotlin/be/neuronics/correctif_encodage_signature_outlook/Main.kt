@@ -19,7 +19,7 @@ class Main {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            logger.info("🚀 Démarrage de l'application correctif Outlook")
+            logger.info("🚀 Démarrage de l'application neuronics-outlook-correctif-encodage-signature")
             afficherConditionsUtilisation()
 
             val defaultPath = "${System.getProperty("user.home")}\\AppData\\Roaming\\Microsoft\\Signatures"

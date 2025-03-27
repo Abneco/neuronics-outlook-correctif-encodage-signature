@@ -56,7 +56,7 @@ C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Signatures
 ### Pour exécuter le correctif :
 
 ```cmd
-java -jar "-Dlog4j.skipJansi=false -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8" .\neuronics-correctif-signature-1.0.jar
+java -jar "-Dlog4j.skipJansi=false -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8" .\neuronics-outlook-correctif-encodage-signature-2025-1.0.0.jar
 ```
 
 Le programme demandera ensuite :
