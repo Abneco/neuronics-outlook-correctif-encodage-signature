@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20")
 
     // logging
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.24.0")
@@ -23,9 +23,9 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.24.0")
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
 
     // https://mvnrepository.com/artifact/org.fusesource.jansi/jansi
     implementation("org.fusesource.jansi:jansi:2.4.1")
@@ -51,7 +51,7 @@ kotlin {
     jvmToolchain(21)
 }
 application {
-    mainClass.set("be.neuronics.correctif_signature_outlook.Main")
+    mainClass.set("be.neuronics.correctif_encodage_signature_outlook.Main")
 }
 tasks.jar {
     // Définit la classe principale de l'application
