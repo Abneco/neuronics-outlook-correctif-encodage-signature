@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     kotlin("jvm") version "2.1.10"
@@ -14,22 +15,11 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20")
-
-    // logging
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.24.0")
     implementation("org.apache.logging.log4j:log4j-api:2.24.0")
     implementation("org.apache.logging.log4j:log4j-core:2.24.0")
-
-    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
-
-    // https://mvnrepository.com/artifact/org.fusesource.jansi/jansi
     implementation("org.fusesource.jansi:jansi:2.4.1")
-
 
     testImplementation(kotlin("test"))
 }
@@ -37,37 +27,88 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs.add("-Xjsr305=strict")
-    }
-}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
+
 kotlin {
     jvmToolchain(21)
 }
+
 application {
     mainClass.set("be.neuronics.correctif_encodage_signature_outlook.Main")
 }
+
 tasks.jar {
-    // Définit la classe principale de l'application
     manifest {
         attributes["Main-Class"] = application.mainClass.get()
     }
 
-    // Inclut les dépendances du classpath d'exécution
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
-        // Exclut certains fichiers META-INF pour éviter les problèmes de sécurité ou de signature
         exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
     }
 
-    // Stratégie pour gérer les fichiers en double dans l'archive
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    // Activation de l'extension Zip64 pour supporter plus de 65535 entrées
     isZip64 = true
+}
+
+
+
+
+sourceSets {
+    create("java8") {
+        kotlin.srcDirs("src/main/kotlin")
+        resources.srcDirs("src/main/resources")
+        compileClasspath += configurations.runtimeClasspath.get()
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+// Configuration explicite Kotlin JVM 1.8
+tasks.named<KotlinCompile>("compileJava8Kotlin") {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        freeCompilerArgs.add("-Xjsr305=strict")
+    }
+    destinationDirectory.set(layout.buildDirectory.dir("classes/kotlin/java8"))
+}
+
+// Configuration explicite Java Compile (Javac) JVM 1.8 :
+tasks.named<JavaCompile>("compileJava8Java") {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.release.set(8)
+
+    // Toolchain explicite Java 8
+    javaCompiler.set(
+        javaToolchains.compilerFor {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }
+    )
+}
+
+// Génère explicitement le JAR Java 8
+val jarJava8 by tasks.registering(Jar::class) {
+    dependsOn("compileJava8Kotlin", "compileJava8Java")
+    archiveClassifier.set("java8")
+
+    from(sourceSets["java8"].output)
+    from(configurations.runtimeClasspath.get().map {
+        if (it.isDirectory) it else zipTree(it)
+    }) {
+        exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA")
+    }
+
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    isZip64 = true
+}
+
+// Génère le jar Java8 lors du build global
+tasks.build {
+    dependsOn(jarJava8)
 }
