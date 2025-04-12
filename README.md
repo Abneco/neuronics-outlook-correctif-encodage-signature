@@ -56,6 +56,12 @@ C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Signatures
 ### Pour exécuter le correctif :
 
 ```cmd
+# Forcer l'encodage console en UTF-8 (optionnel)
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+or
+chcp 65001
+---
+# Lancer le programme
 java -jar "-Dlog4j.skipJansi=false -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8" .\neuronics-outlook-correctif-encodage-signature-2025-1.0.0.jar
 ```
 
